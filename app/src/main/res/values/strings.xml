@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ProgrammableVideoTwilio</string>
+    <string name="screen_capture_error">Screen capturer error occurred.</string>
+    <string name="connect_to_room">Connect to room</string>
+    <string name="disconnect_from_room">Disconnect from room</string>
+    <string name="screen_share">Screen share</string>
+    <string name="send_message">Send message</string>
+    <string name="room_connection_status">Room connection status</string>
+    <string name="publish_data_track">Publish data track</string>
+</resources>
