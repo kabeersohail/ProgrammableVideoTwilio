@@ -24,10 +24,11 @@ import com.example.programmablevideotwilio.utils.RoomConnectionRequest
 import com.example.programmablevideotwilio.utils.TAG
 import com.example.programmablevideotwilio.viewmodels.LaunchViewModel
 import com.twilio.video.*
-import java.nio.ByteBuffer
 
 
 class LaunchFragment : Fragment() {
+
+    private val token = ACCESS_TOKEN_ACER
 
     private lateinit var screenCaptureManager: ScreenCaptureManager
     private lateinit var binding: FragmentLaunchBinding
@@ -35,7 +36,6 @@ class LaunchFragment : Fragment() {
     private var screenCapture: ScreenCapturer? = null
     private lateinit var localVideoView: VideoView
     private var screenVideoTrack: LocalVideoTrack? = null
-    private var remoteDataTrack: RemoteDataTrack? = null
     private var localDataTrack: LocalDataTrack? = null
 
     lateinit var room: Room
@@ -44,164 +44,6 @@ class LaunchFragment : Fragment() {
 
     private val viewModel: LaunchViewModel by lazy {
         ViewModelProvider(this).get(LaunchViewModel::class.java)
-    }
-
-    private val remoteParticipantListener: RemoteParticipant.Listener = object : RemoteParticipant.Listener{
-        override fun onAudioTrackPublished(
-            remoteParticipant: RemoteParticipant,
-            remoteAudioTrackPublication: RemoteAudioTrackPublication
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onAudioTrackUnpublished(
-            remoteParticipant: RemoteParticipant,
-            remoteAudioTrackPublication: RemoteAudioTrackPublication
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onAudioTrackSubscribed(
-            remoteParticipant: RemoteParticipant,
-            remoteAudioTrackPublication: RemoteAudioTrackPublication,
-            remoteAudioTrack: RemoteAudioTrack
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onAudioTrackSubscriptionFailed(
-            remoteParticipant: RemoteParticipant,
-            remoteAudioTrackPublication: RemoteAudioTrackPublication,
-            twilioException: TwilioException
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onAudioTrackUnsubscribed(
-            remoteParticipant: RemoteParticipant,
-            remoteAudioTrackPublication: RemoteAudioTrackPublication,
-            remoteAudioTrack: RemoteAudioTrack
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onVideoTrackPublished(
-            remoteParticipant: RemoteParticipant,
-            remoteVideoTrackPublication: RemoteVideoTrackPublication
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onVideoTrackUnpublished(
-            remoteParticipant: RemoteParticipant,
-            remoteVideoTrackPublication: RemoteVideoTrackPublication
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onVideoTrackSubscribed(
-            remoteParticipant: RemoteParticipant,
-            remoteVideoTrackPublication: RemoteVideoTrackPublication,
-            remoteVideoTrack: RemoteVideoTrack
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onVideoTrackSubscriptionFailed(
-            remoteParticipant: RemoteParticipant,
-            remoteVideoTrackPublication: RemoteVideoTrackPublication,
-            twilioException: TwilioException
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onVideoTrackUnsubscribed(
-            remoteParticipant: RemoteParticipant,
-            remoteVideoTrackPublication: RemoteVideoTrackPublication,
-            remoteVideoTrack: RemoteVideoTrack
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onDataTrackPublished(
-            remoteParticipant: RemoteParticipant,
-            remoteDataTrackPublication: RemoteDataTrackPublication
-        ) {
-            remoteDataTrack = remoteDataTrackPublication.remoteDataTrack
-            remoteDataTrack?.setListener(remoteDataTrackListener)
-        }
-
-        override fun onDataTrackUnpublished(
-            remoteParticipant: RemoteParticipant,
-            remoteDataTrackPublication: RemoteDataTrackPublication
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onDataTrackSubscribed(
-            remoteParticipant: RemoteParticipant,
-            remoteDataTrackPublication: RemoteDataTrackPublication,
-            remoteDataTrack: RemoteDataTrack
-        ) {
-            Toast.makeText(requireContext(),"${remoteParticipant.identity} has subscribed",Toast.LENGTH_SHORT).show()
-        }
-
-        override fun onDataTrackSubscriptionFailed(
-            remoteParticipant: RemoteParticipant,
-            remoteDataTrackPublication: RemoteDataTrackPublication,
-            twilioException: TwilioException
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onDataTrackUnsubscribed(
-            remoteParticipant: RemoteParticipant,
-            remoteDataTrackPublication: RemoteDataTrackPublication,
-            remoteDataTrack: RemoteDataTrack
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onAudioTrackEnabled(
-            remoteParticipant: RemoteParticipant,
-            remoteAudioTrackPublication: RemoteAudioTrackPublication
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onAudioTrackDisabled(
-            remoteParticipant: RemoteParticipant,
-            remoteAudioTrackPublication: RemoteAudioTrackPublication
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onVideoTrackEnabled(
-            remoteParticipant: RemoteParticipant,
-            remoteVideoTrackPublication: RemoteVideoTrackPublication
-        ) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onVideoTrackDisabled(
-            remoteParticipant: RemoteParticipant,
-            remoteVideoTrackPublication: RemoteVideoTrackPublication
-        ) {
-            TODO("Not yet implemented")
-        }
-
-    }
-
-    private val remoteDataTrackListener: RemoteDataTrack.Listener = object : RemoteDataTrack.Listener{
-        override fun onMessage(remoteDataTrack: RemoteDataTrack, messageBuffer: ByteBuffer) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onMessage(remoteDataTrack: RemoteDataTrack, message: String) {
-            Log.d(TAG,message)
-            Toast.makeText(requireContext(), message,Toast.LENGTH_SHORT).show()
-        }
-
     }
 
     private val onScreenCaptureResult =
@@ -271,9 +113,7 @@ class LaunchFragment : Fragment() {
             }
 
             observeSendMessage().observe(viewLifecycleOwner){
-                localDataTrack?.let {
-                    it.send("Hello bro")
-                }
+                localDataTrack?.send("Hello bro")
             }
 
             observeRoomConnectionRequest().observe(viewLifecycleOwner) { roomConnectionRequest ->
@@ -336,22 +176,26 @@ class LaunchFragment : Fragment() {
                 Room.State.RECONNECTING -> Toast.makeText(requireContext(),"Reconnecting",Toast.LENGTH_SHORT).show()
                 Room.State.DISCONNECTED -> {
                     localDataTrack?.let { localDataTrack ->
-                        room = Video.connect(
-                            requireContext(),
-                            connectOptions,
-                            RoomListener(requireContext(), localDataTrack)
-                        )
+                        screenVideoTrack?.let { screenVideoTrack ->
+                            room = Video.connect(
+                                requireContext(),
+                                connectOptions,
+                                RoomListener(requireContext(), localDataTrack, screenVideoTrack, localVideoView)
+                            )
+                        }
                     }
                 }
             }
         } else {
 
             localDataTrack?.let { localDataTrack ->
-                connectOptions = ConnectOptions.Builder(ACCESS_TOKEN_TECHNO)
-                    .roomName(name)
-                    .dataTracks(listOf(localDataTrack))
-                    .build()
-                room = Video.connect(requireContext(), connectOptions, RoomListener(requireContext(), localDataTrack))
+                screenVideoTrack?.let { screenVideoTrack ->
+                    connectOptions = ConnectOptions.Builder(token)
+                        .roomName(name)
+                        .dataTracks(listOf(localDataTrack))
+                        .build()
+                    room = Video.connect(requireContext(), connectOptions, RoomListener(requireContext(), localDataTrack, screenVideoTrack, localVideoView))
+                }
             }
         }
     }
@@ -375,7 +219,7 @@ class LaunchFragment : Fragment() {
             })
 
         localVideoView.visibility = View.VISIBLE
-        screenVideoTrack?.addSink(localVideoView)
+//        screenVideoTrack?.addSink(localVideoView)
 
     }
 

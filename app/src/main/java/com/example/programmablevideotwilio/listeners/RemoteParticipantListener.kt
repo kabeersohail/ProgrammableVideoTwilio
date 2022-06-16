@@ -4,7 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import com.twilio.video.*
 
-class RemoteParticipantListener(private val context: Context): RemoteParticipant.Listener {
+class RemoteParticipantListener(private val context: Context, private val videoView: VideoView): RemoteParticipant.Listener {
     override fun onAudioTrackPublished(
         remoteParticipant: RemoteParticipant,
         remoteAudioTrackPublication: RemoteAudioTrackPublication
@@ -47,7 +47,7 @@ class RemoteParticipantListener(private val context: Context): RemoteParticipant
         remoteParticipant: RemoteParticipant,
         remoteVideoTrackPublication: RemoteVideoTrackPublication
     ) {
-        TODO("Not yet implemented")
+        Toast.makeText(context, "remote participant published video track", Toast.LENGTH_SHORT).show()
     }
 
     override fun onVideoTrackUnpublished(
@@ -62,7 +62,10 @@ class RemoteParticipantListener(private val context: Context): RemoteParticipant
         remoteVideoTrackPublication: RemoteVideoTrackPublication,
         remoteVideoTrack: RemoteVideoTrack
     ) {
-        TODO("Not yet implemented")
+        // here is the code
+
+        remoteVideoTrack.addSink(videoView)
+
     }
 
     override fun onVideoTrackSubscriptionFailed(
@@ -85,7 +88,7 @@ class RemoteParticipantListener(private val context: Context): RemoteParticipant
         remoteParticipant: RemoteParticipant,
         remoteDataTrackPublication: RemoteDataTrackPublication
     ) {
-        Toast.makeText(context, "participant published data track", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "remote participant published data track", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDataTrackUnpublished(

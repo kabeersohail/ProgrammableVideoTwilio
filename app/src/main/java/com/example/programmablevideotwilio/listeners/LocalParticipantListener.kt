@@ -24,7 +24,7 @@ class LocalParticipantListener(private val context: Context): LocalParticipant.L
         localParticipant: LocalParticipant,
         localVideoTrackPublication: LocalVideoTrackPublication
     ) {
-        TODO("Not yet implemented")
+        Toast.makeText(context, "video track published", Toast.LENGTH_SHORT).show()
     }
 
     override fun onVideoTrackPublicationFailed(
@@ -32,7 +32,7 @@ class LocalParticipantListener(private val context: Context): LocalParticipant.L
         localVideoTrack: LocalVideoTrack,
         twilioException: TwilioException
     ) {
-        TODO("Not yet implemented")
+        Toast.makeText(context, "video track publish failed", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDataTrackPublished(

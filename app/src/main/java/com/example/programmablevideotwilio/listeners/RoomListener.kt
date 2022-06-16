@@ -6,7 +6,7 @@ import android.widget.Toast
 import com.example.programmablevideotwilio.utils.TAG
 import com.twilio.video.*
 
-class RoomListener(private val context: Context, private val localDataTrack: LocalDataTrack) : Room.Listener {
+class RoomListener(private val context: Context, private val localDataTrack: LocalDataTrack, private val screenVideoTrack: LocalVideoTrack, private val videoView: VideoView) : Room.Listener {
     override fun onConnected(room: Room) {
         Log.d(TAG, "Connected to ${room.name}")
         Toast.makeText(context, "Connected to ${room.name}", Toast.LENGTH_SHORT).show()
@@ -14,6 +14,7 @@ class RoomListener(private val context: Context, private val localDataTrack: Loc
         // After connecting to a room, we want to publish our local data track
         val localParticipant = room.localParticipant
         localParticipant?.publishTrack(localDataTrack)
+        localParticipant?.publishTrack(screenVideoTrack)
 
     }
 
@@ -41,7 +42,7 @@ class RoomListener(private val context: Context, private val localDataTrack: Loc
         Toast.makeText(context, "${remoteParticipant.identity} has joined the room", Toast.LENGTH_SHORT).show()
         Log.d(TAG, "${remoteParticipant.identity} has joined the room")
 
-        remoteParticipant.setListener(RemoteParticipantListener(context))
+        remoteParticipant.setListener(RemoteParticipantListener(context, videoView))
 
     }
 
