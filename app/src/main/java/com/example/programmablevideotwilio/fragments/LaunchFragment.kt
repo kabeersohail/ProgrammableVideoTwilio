@@ -98,13 +98,18 @@ class LaunchFragment : Fragment() {
     private fun observe() {
         viewModel.apply {
 
-            observeRoomStatus().observe(viewLifecycleOwner){ request ->
-                when(request){
+            observeRoomStatus().observe(viewLifecycleOwner) { request ->
+                when (request) {
                     true -> {
-                        if(::room.isInitialized){
-                            Toast.makeText(requireContext(),"${room.state}",Toast.LENGTH_SHORT).show()
+                        if (::room.isInitialized) {
+                            Toast.makeText(requireContext(), "${room.state}", Toast.LENGTH_SHORT)
+                                .show()
                         } else {
-                            Toast.makeText(requireContext(),"Not connected to any room yet",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                requireContext(),
+                                "Not connected to any room yet",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                     false -> {}
@@ -112,7 +117,7 @@ class LaunchFragment : Fragment() {
 
             }
 
-            observeSendMessage().observe(viewLifecycleOwner){
+            observeSendMessage().observe(viewLifecycleOwner) {
                 localDataTrack?.send("Hello bro")
             }
 
@@ -120,7 +125,10 @@ class LaunchFragment : Fragment() {
                 when (roomConnectionRequest) {
                     RoomConnectionRequest.Connect -> connectToRoom(name)
 
-                    RoomConnectionRequest.Disconnect -> this@LaunchFragment.disconnectFromRoom()
+                    RoomConnectionRequest.Disconnect -> {
+                        if(::room.isInitialized) this@LaunchFragment.disconnectFromRoom()
+                        else Toast.makeText(requireContext(), "Not connected to any room yet",Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -151,7 +159,7 @@ class LaunchFragment : Fragment() {
                 }
             }
 
-            observePublishDataTrack().observe(viewLifecycleOwner){
+            observePublishDataTrack().observe(viewLifecycleOwner) {
                 val localParticipant = room.localParticipant
                 localParticipant?.let {
                     localDataTrack?.let { localDataTrack ->
@@ -169,18 +177,35 @@ class LaunchFragment : Fragment() {
 
         localDataTrack = LocalDataTrack.create(requireContext())
 
-        if(::room.isInitialized){
-            when(room.state){
-                Room.State.CONNECTING -> Toast.makeText(requireContext(),"Connecting",Toast.LENGTH_SHORT).show()
-                Room.State.CONNECTED -> Toast.makeText(requireContext(),"Already connected",Toast.LENGTH_SHORT).show()
-                Room.State.RECONNECTING -> Toast.makeText(requireContext(),"Reconnecting",Toast.LENGTH_SHORT).show()
+        if (::room.isInitialized) {
+            when (room.state) {
+                Room.State.CONNECTING -> Toast.makeText(
+                    requireContext(),
+                    "Connecting",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Room.State.CONNECTED -> Toast.makeText(
+                    requireContext(),
+                    "Already connected",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Room.State.RECONNECTING -> Toast.makeText(
+                    requireContext(),
+                    "Reconnecting",
+                    Toast.LENGTH_SHORT
+                ).show()
                 Room.State.DISCONNECTED -> {
                     localDataTrack?.let { localDataTrack ->
                         screenVideoTrack?.let { screenVideoTrack ->
                             room = Video.connect(
                                 requireContext(),
                                 connectOptions,
-                                RoomListener(requireContext(), localDataTrack, screenVideoTrack, localVideoView)
+                                RoomListener(
+                                    requireContext(),
+                                    localDataTrack,
+                                    screenVideoTrack,
+                                    localVideoView
+                                )
                             )
                         }
                     }
@@ -194,16 +219,25 @@ class LaunchFragment : Fragment() {
                         .roomName(name)
                         .dataTracks(listOf(localDataTrack))
                         .build()
-                    room = Video.connect(requireContext(), connectOptions, RoomListener(requireContext(), localDataTrack, screenVideoTrack, localVideoView))
+                    room = Video.connect(
+                        requireContext(),
+                        connectOptions,
+                        RoomListener(
+                            requireContext(),
+                            localDataTrack,
+                            screenVideoTrack,
+                            localVideoView
+                        )
+                    )
                 }
             }
         }
     }
 
-    private fun disconnectFromRoom() = when(room.state) {
-            Room.State.DISCONNECTED -> Toast.makeText(requireContext(),"Already disconnected",Toast.LENGTH_SHORT).show()
-            else -> room.disconnect()
-        }
+    private fun disconnectFromRoom() = when (room.state) {
+        Room.State.DISCONNECTED -> Toast.makeText(requireContext(), "Already disconnected", Toast.LENGTH_SHORT).show()
+        else -> room.disconnect()
+    }
 
     private fun requestScreenCapturePermission(mediaProjectionManager: MediaProjectionManager) =
         onScreenCaptureResult.launch(mediaProjectionManager.createScreenCaptureIntent())
@@ -214,7 +248,7 @@ class LaunchFragment : Fragment() {
             requireContext(),
             true,
             screenCapture ?: kotlin.run {
-                Log.e(TAG,"Screen capture is null")
+                Log.e(TAG, "Screen capture is null")
                 return
             })
 
